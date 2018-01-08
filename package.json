@@ -1,0 +1,21 @@
+{
+    "name": "珠峰培训React教程",
+    "version": "1.0.0",
+    "description": "",
+    "keywords": [
+        ""
+    ],
+    "homepage": "http://JSLite.io",
+    "author": "zhufengzhufeng <894918097@qq.com>",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "licenses": "MIT",
+    "idoc": {
+        "theme": "handbook",
+        "md": [
+            "React基础篇.md"
+        ]
+    }
+}
