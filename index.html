@@ -13,13 +13,13 @@
             珠峰培训React教程
         
     </div>
-<ul><li class="active"><a href="index.html">React基础篇</a></li></ul></div>
+<ul><li><a href="index.html">React基础篇</a></li></ul></div>
 
 
 <div class="warpper">
 
     <div class="page-toc">
-        <ul><li><a href="#t0学习">学习</a></li><li><a href="#t1React基础篇">React基础篇</a><ul><li><a href="#t21.什么是React?">1.什么是React?</a></li><li><a href="#t32.组件化的概念">2.组件化的概念</a></li><li><a href="#t43.跑通react开发环境">3.跑通react开发环境</a></li><li><a href="#t54.简介JSX">4.简介JSX</a></li><li><a href="#t65.createElement">5.createElement</a></li><li><a href="#t76.react元素/JSX元素">6.react元素/JSX元素</a></li><li><a href="#t87.模拟render实现">7.模拟render实现</a></li><li><a href="#t98.JSX表达式的用法">8.JSX表达式的用法</a></li><li><a href="#t109.JSX属性">9.JSX属性</a></li><li><a href="#t1110.组件的特点声明方式">10.组件的特点声明方式</a></li><li><a href="#t1211.组件的两种定义方式">11.组件的两种定义方式</a></li><li><a href="#t1312.组件中属性和状态的区别">12.组件中属性和状态的区别</a></li><li><a href="#t1413.绑定事件">13.绑定事件</a></li></ul></li><li><a href="#t15{this.props.name} {this.props.age}">{this.props.name} {this.props.age}</a><ul><li><a href="#t1615.状态的使用">15.状态的使用</a></li><li><a href="#t1716.复合组件">16.复合组件</a></li><li><a href="#t1817.受控组件和非受控组件">17.受控组件和非受控组件</a></li><li><a href="#t1918.声明周期">18.声明周期</a></li><li><a href="#t2019.评论面板">19.评论面板</a></li><li><a href="#t2120.React实现百度搜索框">20.React实现百度搜索框</a></li><li><a href="#t2221.react轮播图考试">21.react轮播图考试</a></li></ul></li></ul>
+        <ul><li><a href="#t0学习">学习</a></li><li><a href="#t1React基础篇">React基础篇</a><ul><li><a href="#t21.什么是React?">1.什么是React?</a></li><li><a href="#t32.组件化的概念">2.组件化的概念</a></li><li><a href="#t43.跑通react开发环境">3.跑通react开发环境</a></li><li><a href="#t54.简介JSX">4.简介JSX</a></li><li><a href="#t65.createElement">5.createElement</a></li><li><a href="#t76.react元素/JSX元素">6.react元素/JSX元素</a></li><li><a href="#t87.模拟render实现">7.模拟render实现</a></li><li><a href="#t98.JSX表达式的用法">8.JSX表达式的用法</a></li><li><a href="#t109.JSX属性">9.JSX属性</a></li><li><a href="#t1110.组件的特点声明方式">10.组件的特点声明方式</a></li><li><a href="#t1211.组件的两种定义方式">11.组件的两种定义方式</a></li><li><a href="#t1312.组件中属性和状态的区别">12.组件中属性和状态的区别</a></li><li><a href="#t1413.绑定事件">13.绑定事件</a></li><li><a href="#t1514.属性校验,默认属性">14.属性校验,默认属性</a></li><li><a href="#t1615.状态的使用">15.状态的使用</a></li><li><a href="#t1716.复合组件">16.复合组件</a></li><li><a href="#t1817.受控组件和非受控组件">17.受控组件和非受控组件</a></li><li><a href="#t1918.声明周期">18.声明周期</a></li><li><a href="#t2019.评论面板">19.评论面板</a></li><li><a href="#t2120.React实现百度搜索框">20.React实现百度搜索框</a></li><li><a href="#t2221.react轮播图考试">21.react轮播图考试</a></li></ul></li></ul>
     </div>
     
     <div class="content markdown-body">
@@ -178,33 +178,37 @@ render(&lt;div&gt;
 </blockquote>
 <h3 id="t1413.&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;">13.&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6; <a href="#t1413.&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;"> # </a></h3>
 <ul>
-<li>&#x7ED9;&#x5143;&#x7D20;&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;&#xFF0C;&#x4E8B;&#x4EF6;&#x7ED1;&#x5B9A;&#x65B9;&#x5F0F;
-```
-class Clock extends Component {
-  constructor(){<pre><code>  super();
-  this.state = {date:new Date().toLocaleString()}
-</code></pre>  }
-  componentDidMount(){ //&#x7EC4;&#x4EF6;&#x6E32;&#x67D3;&#x5B8C;&#x6210;&#xFF0C;&#x5F53;&#x6E32;&#x67D3;&#x540E;&#x4F1A;&#x81EA;&#x52A8;&#x89E6;&#x53D1;&#x6B64;&#x51FD;&#x6570;<pre><code>  this.timer = setInterval(()=&gt;{ // &#x7BAD;&#x5934;&#x51FD;&#x6570; &#x5426;&#x5219;this &#x6307;&#x5411;&#x7684;&#x662F;window
-      this.setState({date:new Date().toLocaleString()})
-  },1000);
-</code></pre>  }
-  componentWillUnmount(){ //&#x7EC4;&#x4EF6;&#x5C06;&#x8981;&#x5378;&#x8F7D;&#xFF0C;&#x5F53;&#x7EC4;&#x4EF6;&#x79FB;&#x9664;&#x65F6;&#x4F1A;&#x8C03;&#x7528;<pre><code>  clearInterval(this.timer); //&#x4E00;&#x822C;&#x5728;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x4E2D; &#x6E05;&#x9664;&#x5B9A;&#x65F6;&#x5668;&#x548C;&#x7ED1;&#x5B9A;&#x7684;&#x4E8B;&#x4EF6;
-</code></pre>  }
-  destroy=()=&gt;{ //es7 &#x7BAD;&#x5934;&#x51FD;&#x6570;<pre><code>  // &#x5220;&#x9664;&#x67D0;&#x4E2A;&#x7EC4;&#x4EF6;
-  ReactDOM.unmountComponentAtNode(window.root);
-</code></pre>  }
-  render(){<pre><code>  // &#x7ED9;react&#x5143;&#x7D20;&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;&#x9ED8;&#x8BA4;this&#x662F;undefined,bind&#x65B9;&#x5F0F; &#x5728;&#x5C31;&#x662F;&#x7BAD;&#x5934;&#x51FD;&#x6570;
-  return &lt;h1 onClick={this.destroy}&gt;{this.state.date}&lt;/h1&gt;
-</code></pre>  }
+<li>&#x7ED9;&#x5143;&#x7D20;&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;&#xFF0C;&#x4E8B;&#x4EF6;&#x7ED1;&#x5B9A;&#x65B9;&#x5F0F;</li>
+</ul>
+<pre><code>class Clock extends Component {
+    constructor(){
+        super();
+        this.state = {date:new Date().toLocaleString()}
+    }
+    componentDidMount(){ //&#x7EC4;&#x4EF6;&#x6E32;&#x67D3;&#x5B8C;&#x6210;&#xFF0C;&#x5F53;&#x6E32;&#x67D3;&#x540E;&#x4F1A;&#x81EA;&#x52A8;&#x89E6;&#x53D1;&#x6B64;&#x51FD;&#x6570;
+        this.timer = setInterval(()=&gt;{ // &#x7BAD;&#x5934;&#x51FD;&#x6570; &#x5426;&#x5219;this &#x6307;&#x5411;&#x7684;&#x662F;window
+            this.setState({date:new Date().toLocaleString()})
+        },1000);
+    }
+    componentWillUnmount(){ //&#x7EC4;&#x4EF6;&#x5C06;&#x8981;&#x5378;&#x8F7D;&#xFF0C;&#x5F53;&#x7EC4;&#x4EF6;&#x79FB;&#x9664;&#x65F6;&#x4F1A;&#x8C03;&#x7528;
+        clearInterval(this.timer); //&#x4E00;&#x822C;&#x5728;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x4E2D; &#x6E05;&#x9664;&#x5B9A;&#x65F6;&#x5668;&#x548C;&#x7ED1;&#x5B9A;&#x7684;&#x4E8B;&#x4EF6;
+    }
+    destroy=()=&gt;{ //es7 &#x7BAD;&#x5934;&#x51FD;&#x6570;
+        // &#x5220;&#x9664;&#x67D0;&#x4E2A;&#x7EC4;&#x4EF6;
+        ReactDOM.unmountComponentAtNode(window.root);
+    }
+    render(){
+        // &#x7ED9;react&#x5143;&#x7D20;&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;&#x9ED8;&#x8BA4;this&#x662F;undefined,bind&#x65B9;&#x5F0F; &#x5728;&#x5C31;&#x662F;&#x7BAD;&#x5934;&#x51FD;&#x6570;
+        return &lt;h1 onClick={this.destroy}&gt;{this.state.date}&lt;/h1&gt;
+    }
 }
 // &#x6267;&#x884C;&#x987A;&#x5E8F; constructor -&gt; render -&gt; componentDidMount -&gt; setState-&gt; render - onClick-&gt; unmountComponentAtNode -&gt; componentWillUnmount -&gt; clearInterval
-ReactDOM.render(<clock>,window.root);</clock></li>
-</ul>
-<pre><code>
-&gt; &#x7ED9;jsx&#x5143;&#x7D20;&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;&#x8981;&#x6CE8;&#x610F;&#x4E8B;&#x4EF6;&#x4E2D;&#x7684;this&#x6307;&#x5411;&#xFF0C;&#x4E8B;&#x4EF6;&#x540D;&#x91C7;&#x7528; on+&quot;&#x5F00;&#x5934;&#x5927;&#x5199;&#x4E8B;&#x4EF6;&#x540D;&quot;&#x7684;&#x65B9;&#x5F0F;
-
-### 14.&#x5C5E;&#x6027;&#x6821;&#x9A8C;,&#x9ED8;&#x8BA4;&#x5C5E;&#x6027;
-</code></pre><p>import React from &apos;react&apos;;
+ReactDOM.render(&lt;Clock/&gt;,window.root);
+</code></pre><blockquote>
+<p>&#x7ED9;jsx&#x5143;&#x7D20;&#x7ED1;&#x5B9A;&#x4E8B;&#x4EF6;&#x8981;&#x6CE8;&#x610F;&#x4E8B;&#x4EF6;&#x4E2D;&#x7684;this&#x6307;&#x5411;&#xFF0C;&#x4E8B;&#x4EF6;&#x540D;&#x91C7;&#x7528; on+&quot;&#x5F00;&#x5934;&#x5927;&#x5199;&#x4E8B;&#x4EF6;&#x540D;&quot;&#x7684;&#x65B9;&#x5F0F;</p>
+</blockquote>
+<h3 id="t1514.&#x5C5E;&#x6027;&#x6821;&#x9A8C;,&#x9ED8;&#x8BA4;&#x5C5E;&#x6027;">14.&#x5C5E;&#x6027;&#x6821;&#x9A8C;,&#x9ED8;&#x8BA4;&#x5C5E;&#x6027; <a href="#t1514.&#x5C5E;&#x6027;&#x6821;&#x9A8C;,&#x9ED8;&#x8BA4;&#x5C5E;&#x6027;"> # </a></h3>
+<pre><code>import React from &apos;react&apos;;
 import ReactDOM from &apos;react-dom&apos;;
 import PropTypes from &apos;prop-types&apos;; //&#x5F15;&#x5165;&#x5C5E;&#x6027;&#x6821;&#x9A8C;&#x7684;&#x6A21;&#x5757;
 class School extends React.Component{ // &#x7C7B;&#x4E0A;&#x7684;&#x5C5E;&#x6027;&#x5C31;&#x53EB;&#x9759;&#x6001;&#x5C5E;&#x6027;
@@ -220,11 +224,10 @@ class School extends React.Component{ // &#x7C7B;&#x4E0A;&#x7684;&#x5C5E;&#x6027
         super();
     }
     render(){
-        return </p><h1 id="t15{this.props.name} {this.props.age}">{this.props.name} {this.props.age} <a href="#t15{this.props.name} {this.props.age}"> # </a></h1>
+        return &lt;h1&gt;{this.props.name} {this.props.age}&lt;/h1&gt;
     }
 }
-```<p></p>
-<blockquote>
+</code></pre><blockquote>
 <p>propTypes&#x548C;defaultProps&#x540D;&#x5B57;&#x4E0D;&#x80FD;&#x66F4;&#x6539;&#xFF0C;&#x8FD9;&#x662F;react&#x89C4;&#x5B9A;&#x597D;&#x7684;&#x540D;&#x79F0;</p>
 </blockquote>
 <h3 id="t1615.&#x72B6;&#x6001;&#x7684;&#x4F7F;&#x7528;">15.&#x72B6;&#x6001;&#x7684;&#x4F7F;&#x7528; <a href="#t1615.&#x72B6;&#x6001;&#x7684;&#x4F7F;&#x7528;"> # </a></h3>

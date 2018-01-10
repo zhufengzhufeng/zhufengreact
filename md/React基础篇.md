@@ -156,6 +156,7 @@ class Build extends Component{
 
 ### 13.绑定事件
 - 给元素绑定事件，事件绑定方式
+
 ```
 class Clock extends Component {
     constructor(){
