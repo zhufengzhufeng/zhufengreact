@@ -123,18 +123,93 @@ react元素是是组件组成的基本单位
 - 可以通过render方法将组件渲染成真实DOM
 
 ### 11.组件的两种定义方式
+react怎么区分是组件还是jsx元素？组件名需要开头大写，react组件当作jsx来进行使用
 - 第一种方式是函数声明
+```
+function Build(props) {
+    return <p>{props.name} {props.age}</p>
+}
+render(<div>
+    <Build name={school1.name} age={school1.age}/>
+    <Build {...school2} />
+</div>,window.root);
+```
+
 - 第二种方式是类声明
+```
+class Build extends Component{
+    render(){
+        let {name,age} = this.props;
+        return <p>{name} {age}</p>
+    }
+}
+```
 
 > 类声明有状态，this，和声明周期
 
-### 12.绑定事件
-- 给元素绑定事件，事件绑定方式
-> 介绍componentDidMount,unmountComponentAtNode,componmentWillUnmount
+### 12.组件中属性和状态的区别
+- 组件的数据来源有两个地方
+    - props 外界传递过来的(默认属性，属性校验)
+    - state 状态是自己的,改变状态唯一的方式就是setState
 
-### 13.组件中属性和状态的区别
+> 属性和状态的变化都会影响视图更新
+
+### 13.绑定事件
+- 给元素绑定事件，事件绑定方式
+```
+class Clock extends Component {
+    constructor(){
+        super();
+        this.state = {date:new Date().toLocaleString()}
+    }
+    componentDidMount(){ //组件渲染完成，当渲染后会自动触发此函数
+        this.timer = setInterval(()=>{ // 箭头函数 否则this 指向的是window
+            this.setState({date:new Date().toLocaleString()})
+        },1000);
+    }
+    componentWillUnmount(){ //组件将要卸载，当组件移除时会调用
+        clearInterval(this.timer); //一般在这个方法中 清除定时器和绑定的事件
+    }
+    destroy=()=>{ //es7 箭头函数
+        // 删除某个组件
+        ReactDOM.unmountComponentAtNode(window.root);
+    }
+    render(){
+        // 给react元素绑定事件默认this是undefined,bind方式 在就是箭头函数
+        return <h1 onClick={this.destroy}>{this.state.date}</h1>
+    }
+}
+// 执行顺序 constructor -> render -> componentDidMount -> setState-> render - onClick-> unmountComponentAtNode -> componentWillUnmount -> clearInterval
+ReactDOM.render(<Clock/>,window.root);
+
+```
+
+> 给jsx元素绑定事件要注意事件中的this指向，事件名采用 on+"开头大写事件名"的方式
 
 ### 14.属性校验,默认属性
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types'; //引入属性校验的模块
+class School extends React.Component{ // 类上的属性就叫静态属性
+    static propTypes = { // 校验属性的类型和是否必填
+        age:PropTypes.number.isRequired, // 支持的类型可以参考prop-types的readme文件
+    };
+    static defaultProps = { // 先默认调用defaultProps
+        name:'珠峰',
+        age:1
+    }; // 默认属性
+    constructor(props){ //如果想在构造函数中拿到属性需要通过参数的方式
+         //不能在组件中更改属性 不能修改属性*
+        super();
+    }
+    render(){
+        return <h1>{this.props.name} {this.props.age}</h1>
+    }
+}
+```
+
+> propTypes和defaultProps名字不能更改，这是react规定好的名称
 
 ### 15.状态的使用
 - setState方法的应用
