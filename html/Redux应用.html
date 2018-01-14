@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>珠峰培训React教程</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css">
+</head>
+<body>
+<div class="nav">
+    <div class="logo">
+        
+            珠峰培训React教程
+        
+    </div>
+<ul><li><a href="../index.html">React基础篇</a></li><li><a href="../index.html">Redux应用</a></li><li><a href="../index.html">Redux深入</a></li></ul></div>
+
+
+<div class="warpper">
+
+    <div class="page-toc">
+        <ul><li><a href="#t0什么是Redux">什么是Redux</a><ul><li><a href="#t11).统一数据管理">1).统一数据管理</a></li><li><a href="#t22).实现dispatch">2).实现dispatch</a></li><li><a href="#t33).createStore的实现">3).createStore的实现</a></li><li><a href="#t44).reducer的实现">4).reducer的实现</a></li><li><a href="#t55).订阅函数">5).订阅函数</a></li></ul></li><li><a href="#t62.应用redux+js实现counter">2.应用redux+js实现counter</a></li><li><a href="#t73.应用redux+react实现counter">3.应用redux+react实现counter</a></li></ul>
+    </div>
+    
+    <div class="content markdown-body">
+        <h2 id="t0&#x4EC0;&#x4E48;&#x662F;Redux">&#x4EC0;&#x4E48;&#x662F;Redux <a href="#t0&#x4EC0;&#x4E48;&#x662F;Redux"> # </a></h2>
+<p>&#x6211;&#x4EEC;&#x4E00;&#x76F4;&#x901A;&#x8FC7;&#x5C5E;&#x6027;&#x6765;&#x8FDB;&#x884C;&#x7EC4;&#x4EF6;&#x4E2D;&#x7684;&#x6570;&#x636E;&#x4F20;&#x9012;,&#x8FD9;&#x79CD;&#x6A21;&#x5F0F;&#x662F;&#x975E;&#x5E38;&#x8106;&#x5F31;&#x7684;&#x3002;&#x5728;&#x65E5;&#x5E38;&#x7684;&#x5F00;&#x53D1;&#x4E2D;&#x7ECF;&#x5E38;&#x4F1A;&#x9047;&#x5230;&#x975E;&#x7236;&#x5B50;&#x7EC4;&#x4EF6;&#x4F20;&#x9012;&#x7684;&#x573A;&#x666F;&#x3002;&#x539F;&#x6765;&#x7684;&#x65B9;&#x5F0F;&#x662F;&#x627E;&#x5230;&#x5171;&#x540C;&#x7684;&#x7236;&#x7EA7;&#x8FDB;&#x884C;&#x6570;&#x636E;&#x4EA4;&#x4E92;&#xFF0C;&#x8FD9;&#x65F6;&#x901A;&#x4FE1;&#x5C31;&#x53D8;&#x5F97;&#x6BD4;&#x8F83;&#x9EBB;&#x70E6;
+&#x6211;&#x4EEC;&#x5148;&#x901A;&#x8FC7;&#x4E00;&#x4E2A;&#x7B80;&#x5355;&#x7684;&#x4F8B;&#x5B50;&#x5B9E;&#x73B0;&#x4E00;&#x4E0B;redux&#x7684;&#x5DE5;&#x4F5C;&#x6A21;&#x5F0F;:</p>
+<h3 id="t11).&#x7EDF;&#x4E00;&#x6570;&#x636E;&#x7BA1;&#x7406;">1).&#x7EDF;&#x4E00;&#x6570;&#x636E;&#x7BA1;&#x7406; <a href="#t11).&#x7EDF;&#x4E00;&#x6570;&#x636E;&#x7BA1;&#x7406;"> # </a></h3>
+<pre><code>let state = {
+  title:{color:&apos;red&apos;,text:&apos;&#x6807;&#x9898;&apos;},
+  content:{color:&apos;green&apos;,text:&apos;&#x5185;&#x5BB9;&apos;}
+};
+function renderContent() {
+  let content = document.querySelector(&apos;.content&apos;);
+  content.innerHTML = state.content.text;
+  content.style.color = state.content.color;
+}
+function renderTitle() {
+  let title = document.querySelector(&apos;.title&apos;);
+  title.innerHTML = state.title.text;
+  title.style.color = state.title.color;
+}
+function renderApp() {
+  renderContent();
+  renderTitle()
+}
+renderApp();
+</code></pre><blockquote>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5C06;renderContent,renderTitle&#x770B;&#x6210;&#x4E24;&#x4E2A;&#x7EC4;&#x4EF6;&#x5C06;&#x6240;&#x9700;&#x7684;&#x6570;&#x636E;&#x63D0;&#x53D6;&#x5230;state&#x4E2D;&#x7EDF;&#x4E00;&#x8FDB;&#x884C;&#x7BA1;&#x7406;&#x3002;&#x5F53;&#x6E32;&#x67D3;&#x540E;&#x6211;&#x4EEC;&#x5E0C;&#x671B;&#x66F4;&#x6539;&#x72B6;&#x6001;&#xFF0C;&#x5C01;&#x88C5;&#x66F4;&#x6539;&#x72B6;&#x6001;&#x7684;&#x65B9;&#x6CD5;(dispatch)</p>
+</blockquote>
+<h3 id="t22).&#x5B9E;&#x73B0;dispatch">2).&#x5B9E;&#x73B0;dispatch <a href="#t22).&#x5B9E;&#x73B0;dispatch"> # </a></h3>
+<pre><code>let CHANGE_TITLE_TEXT = &apos;CHANGE_TITLE_TEXT&apos;;
+function dispatch(action) {
+  switch (action.type){
+    case CHANGE_TITLE_TEXT:
+      state = {...state,title:{...state.title,text:action.text}};
+  }
+}
+setTimeout(()=&gt;{
+  dispatch({type:CHANGE_TITLE_TEXT,text:&apos;hello&apos;});
+  renderApp();
+},1000);
+</code></pre><blockquote>
+<p>&#x4E0D;&#x8981;&#x76F4;&#x63A5;&#x66F4;&#x6539;&#x72B6;&#x6001;&#x800C;&#x662F;&#x4F7F;&#x7528;dispatch&#x65B9;&#x6CD5;&#x8FDB;&#x884C;&#x72B6;&#x6001;&#x7684;&#x66F4;&#x6539;,&#x6D3E;&#x53D1;&#x4E00;&#x4E2A;&#x5E26;&#x6709;type&#x7684;&#x5C5E;&#x6027;&#x6765;&#x8FDB;&#x884C;&#x72B6;&#x6001;&#x7684;&#x66F4;&#x6539;&#xFF0C;&#x4F46;&#x662F;&#x4F9D;&#x7136;&#x65E0;&#x6CD5;&#x963B;&#x6B62;&#x7528;&#x6237;&#x66F4;&#x6539;&#x72B6;&#x6001;.</p>
+</blockquote>
+<h3 id="t33).createStore&#x7684;&#x5B9E;&#x73B0;">3).createStore&#x7684;&#x5B9E;&#x73B0; <a href="#t33).createStore&#x7684;&#x5B9E;&#x73B0;"> # </a></h3>
+<pre><code>let CHANGE_TITLE_TEXT = &apos;CHANGE_TITLE_TEXT&apos;;
+function createStore() {
+  let state = {
+    title:{color:&apos;red&apos;,text:&apos;&#x6807;&#x9898;&apos;},
+    content:{color:&apos;green&apos;,text:&apos;&#x5185;&#x5BB9;&apos;}
+  };
+  let getState = () =&gt; JSON.parse(JSON.stringify(state)); // &#x521B;&#x9020;&#x4E00;&#x4EFD;&#x548C;&#x72B6;&#x6001;&#x540C;&#x6837;&#x7684;&#x5BF9;&#x8C61;&#x7ED9;&#x5916;&#x754C;&#x6765;&#x7528;
+  function dispatch(action) {
+    switch (action.type){
+      case CHANGE_TITLE_TEXT:
+        state = {...state,title:{...state.title,text:action.text}};
+    }
+  }
+  return {
+    dispatch,
+    getState,
+  }
+}
+let store = createStore(); // &#x62FF;&#x5230;createStore&#x4E2D;&#x8FD4;&#x56DE;&#x7684;&#x5BF9;&#x8C61;
+function renderContent() {
+  let content = document.querySelector(&apos;.content&apos;);
+  content.innerHTML = store.getState().content.text;
+  content.style.color = store.getState().content.color;
+}
+function renderTitle() {
+  let title = document.querySelector(&apos;.title&apos;);
+  title.innerHTML = store.getState().title.text;
+  title.style.color = store.getState().title.color;
+}
+function renderApp() {
+  renderContent();
+  renderTitle()
+}
+renderApp();
+
+setTimeout(()=&gt;{
+  store.dispatch({type:CHANGE_TITLE_TEXT,text:&apos;hello&apos;});
+  renderApp();
+},1000);
+</code></pre><blockquote>
+<p>&#x6211;&#x4EEC;&#x5C06;&#x72B6;&#x6001;&#x653E;&#x5230;&#x4E86;createStore&#x51FD;&#x6570;&#x4E2D;&#xFF0C;&#x76EE;&#x7684;&#x662F;&#x9694;&#x79BB;&#x4F5C;&#x7528;&#x57DF;&#xFF0C;&#x5E76;&#x4E14;&#x518D;&#x5185;&#x90E8;&#x8FD4;&#x56DE;&#x6DF1;&#x5EA6;&#x514B;&#x9686;&#x7684;&#x5BF9;&#x8C61;&#xFF0C;&#x8FD9;&#x6837;&#x7528;&#x6237;&#x65E0;&#x6CD5;&#x518D;&#x901A;&#x8FC7;&#x5916;&#x754C;&#x66F4;&#x6539;&#x72B6;&#x6001;&#x3002;&#x4F46;&#x662F;&#x72B6;&#x6001;&#x5E94;&#x8BE5;&#x7531;&#x6211;&#x4EEC;&#x81EA;&#x8EAB;&#x6765;&#x63A7;&#x5236;&#xFF0C;&#x5E94;&#x8BE5;&#x662F;&#x5916;&#x754C;&#x4F20;&#x5165;&#x7684;&#xFF0C;&#x6240;&#x4EE5;&#x8981;&#x5C06;&#x72B6;&#x6001;&#x62FF;&#x51FA;createStore&#x3002;&#x5E76;&#x4E14;&#x5224;&#x65AD;&#x7684;&#x903B;&#x8F91;&#x4E5F;&#x5E94;&#x8BE5;&#x7531;&#x6211;&#x4EEC;&#x81EA;&#x5DF1;&#x6765;&#x7F16;&#x5199;</p>
+</blockquote>
+<h3 id="t44).reducer&#x7684;&#x5B9E;&#x73B0;">4).reducer&#x7684;&#x5B9E;&#x73B0; <a href="#t44).reducer&#x7684;&#x5B9E;&#x73B0;"> # </a></h3>
+<pre><code>const CHANGE_TITLE_TEXT = &apos;CHANGE_TITLE_TEXT&apos;;
+function createStore(reducer) {
+  let state;
+  let getState = () =&gt; JSON.parse(JSON.stringify(state));
+  function dispatch(action) { 
+    state  = reducer(state,action);//&#x83B7;&#x53D6;&#x5BF9;&#x5E94;&#x7684;&#x72B6;&#x6001;&#x8986;&#x76D6;&#x6389;store&#x4E2D;&#x7684;&#x72B6;&#x6001;
+  }
+  dispatch({}); // &#x9ED8;&#x8BA4;&#x4F20;&#x5165;&#x7A7A;&#x5BF9;&#x8C61;&#x83B7;&#x53D6;reducer&#x8FD4;&#x56DE;&#x7684;&#x9ED8;&#x8BA4;&#x7ED3;&#x679C;
+  return {
+    dispatch,
+    getState,
+  }
+}
+let initState = {
+  title:{color:&apos;red&apos;,text:&apos;&#x6807;&#x9898;&apos;},
+  content:{color:&apos;green&apos;,text:&apos;&#x5185;&#x5BB9;&apos;}
+};
+// reducer&#x5E94;&#x8BE5;&#x5177;&#x6709;&#x9ED8;&#x8BA4;&#x72B6;&#x6001;,&#x5F53;&#x66F4;&#x6539;&#x72B6;&#x6001;&#x540E;&#x4F7F;&#x7528;&#x6700;&#x65B0;&#x7684;&#x72B6;&#x6001;
+function reducer(state=initState,action) {
+  switch (action.type){
+    case CHANGE_TITLE_TEXT:
+      return {...state,title:{...state.title,text:action.text}};
+  }
+  return state
+}
+</code></pre><blockquote>
+<p>&#x6B64;&#x65F6;&#x6211;&#x4EEC;&#x5DF2;&#x5C06;&#x9700;&#x8981;&#x81EA;&#x5DF1;&#x5904;&#x7406;&#x7684;&#x903B;&#x8F91;&#x63D0;&#x53D6;&#x51FA;&#x6765;&#xFF0C;&#x4F46;&#x662F;&#x6211;&#x4EEC;&#x6BCF;&#x6B21;dispatch&#x65F6;&#x90FD;&#x9700;&#x8981;&#x81EA;&#x5DF1;&#x89E6;&#x53D1;&#x89C6;&#x56FE;&#x7684;&#x66F4;&#x65B0;,&#x6211;&#x4EEC;&#x5E0C;&#x671B;&#x91C7;&#x7528;&#x53D1;&#x5E03;&#x8BA2;&#x9605;&#x6765;&#x5B9E;&#x73B0;&#x3002;</p>
+</blockquote>
+<h3 id="t55).&#x8BA2;&#x9605;&#x51FD;&#x6570;">5).&#x8BA2;&#x9605;&#x51FD;&#x6570; <a href="#t55).&#x8BA2;&#x9605;&#x51FD;&#x6570;"> # </a></h3>
+<pre><code>function createStore(reducer) {
+  let state;
+  let listeners = []; // &#x653E;&#x7F6E;&#x6240;&#x6709;&#x8BA2;&#x9605;&#x7684;&#x51FD;&#x6570;
+  let getState = () =&gt; JSON.parse(JSON.stringify(state));
+  function dispatch(action) {
+    state  = reducer(state,action);
+    listeners.forEach(item=&gt;item());//&#x6BCF;&#x6B21;&#x6D3E;&#x53D1;&#x540E;&#x6267;&#x884C;&#x8BA2;&#x9605;&#x7684;&#x51FD;&#x6570;
+  }
+  let subscribe = (fn)=&gt;{ //&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x8BA2;&#x9605;&#x4E8B;&#x4EF6;
+    listeners.push(fn);
+    return ()=&gt;{ //&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;&#x79FB;&#x9664;&#x76D1;&#x542C;&#x7684;&#x65B9;&#x6CD5;
+      listeners = listeners.filter(l=&gt;l!==fn);
+    }
+  };
+  dispatch({});
+  return {
+    dispatch,
+    getState,
+    subscribe
+  }
+}
+store.subscribe(renderApp); //&#x901A;&#x8FC7;suscribe&#x8BA2;&#x9605;&#x6D3E;&#x53D1;&#x65F6;&#x9700;&#x8981;&#x89E6;&#x53D1;&#x7684;&#x51FD;&#x6570;
+setTimeout(()=&gt;{
+  store.dispatch({type:CHANGE_TITLE_TEXT,text:&apos;hello&apos;});
+},1000);
+</code></pre><blockquote>
+<p>&#x6B64;&#x65F6;&#x6211;&#x4EEC;redux&#x4E2D;&#x5E38;&#x7528;&#x7684;&#x65B9;&#x6CD5;&#x5DF2;&#x7ECF;&#x5C01;&#x88C5;&#x5B8C;&#x6210;&#xFF01;^_^,&#x6211;&#x4EEC;&#x5C06;&#x5C01;&#x88C5;&#x597D;&#x7684;&#x903B;&#x8F91;&#x62BD;&#x79BB;&#x6210;redux.js</p>
+</blockquote>
+<pre><code>function createStore(reducer) {
+  let state;
+  let listeners = []; // &#x653E;&#x7F6E;&#x6240;&#x6709;&#x8BA2;&#x9605;&#x7684;&#x51FD;&#x6570;
+  let getState = () =&gt; JSON.parse(JSON.stringify(state));
+  function dispatch(action) {
+    state  = reducer(state,action);
+    listeners.forEach(item=&gt;item());//&#x6BCF;&#x6B21;&#x6D3E;&#x53D1;&#x540E;&#x6267;&#x884C;&#x8BA2;&#x9605;&#x7684;&#x51FD;&#x6570;
+  }
+  let subscribe = (fn)=&gt;{ //&#x4E3B;&#x8981;&#x7528;&#x4E8E;&#x8BA2;&#x9605;&#x4E8B;&#x4EF6;
+    listeners.push(fn);
+    return ()=&gt;{ //&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;&#x79FB;&#x9664;&#x76D1;&#x542C;&#x7684;&#x65B9;&#x6CD5;
+      listeners = listeners.filter(l=&gt;l!==fn);
+    }
+  };
+  dispatch({});
+  return {
+    dispatch,
+    getState,
+    subscribe
+  }
+}
+</code></pre><h2 id="t62.&#x5E94;&#x7528;redux+js&#x5B9E;&#x73B0;counter">2.&#x5E94;&#x7528;redux+js&#x5B9E;&#x73B0;counter <a href="#t62.&#x5E94;&#x7528;redux+js&#x5B9E;&#x73B0;counter"> # </a></h2>
+<pre><code>&lt;p id=&quot;container&quot;&gt;&lt;/p&gt;
+&lt;button id=&quot;add&quot;&gt;+&lt;/button&gt;
+&lt;button id=&quot;minus&quot;&gt;-&lt;/button&gt;
+&lt;script src=&quot;redux.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  const ADD = &apos;ADD&apos;;
+  const MINUS = &apos;MINUS&apos;;
+  function reducer(state={number:0},action) {
+    switch (action.type){
+      case ADD:
+        return {number:state.number + action.amount};
+      case MINUS:
+        return {number:state.number - action.amount};
+    }
+    return state;
+  }
+  let store = createStore(reducer);
+  function render() {
+    container.innerHTML = store.getState().number
+  }
+  render();
+  store.subscribe(render);
+  add.addEventListener(&apos;click&apos;,function () {
+    store.dispatch({type:ADD,amount:1})
+  },false);
+  minus.addEventListener(&apos;click&apos;,function () {
+    store.dispatch({type:MINUS,amount:2})
+  },false)
+&lt;/script&gt;
+</code></pre><blockquote>
+<p>&#x7531;&#x6B64;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x4E86;&#x81EA;&#x5DF1;&#x7684;redux&#x5E93;&#x94FE;&#x63A5;&#x4E86;&#x539F;&#x751F;js&#x8FDB;&#x884C;&#x4F7F;&#x7528;&#x3002;</p>
+</blockquote>
+<h2 id="t73.&#x5E94;&#x7528;redux+react&#x5B9E;&#x73B0;counter">3.&#x5E94;&#x7528;redux+react&#x5B9E;&#x73B0;counter <a href="#t73.&#x5E94;&#x7528;redux+react&#x5B9E;&#x73B0;counter"> # </a></h2>
+<pre><code>import React,{Component} from &apos;react&apos;
+import ReactDOM,{render} from &apos;react-dom&apos;;
+import {createStore} from &apos;./redux&apos;
+const ADD = &apos;ADD&apos;;
+const MINUS = &apos;MINUS&apos;;
+function reducer(state={number:0},action) {
+  switch (action.type){
+    case ADD:
+      return {number:state.number + action.amount};
+    case MINUS:
+      return {number:state.number - action.amount};
+  }
+  return state;
+}
+let store = createStore(reducer);
+class Counter extends React.Component {
+  constructor(){
+    super();
+    this.state = {number:store.getState().number}
+  }
+  componentDidMount(){
+    store.subscribe( () =&gt; {
+      this.setState({number:store.getState().number})
+    })
+  }
+  handleAddClick=()=&gt;{
+    store.dispatch({type:ADD,amount:1});
+  };
+  handleMinusClick=()=&gt;{
+    store.dispatch({type:MINUS,amount:1});
+  };
+  render(){
+    return &lt;div&gt;
+      &lt;p&gt;{this.state.number}&lt;/p&gt;
+      &lt;button onClick={this.handleAddClick}&gt;+&lt;/button&gt;
+      &lt;button onClick={this.handleMinusClick}&gt;-&lt;/button&gt;
+    &lt;/div&gt;
+  }
+}
+
+ReactDOM.render(&lt;Counter/&gt;,window.root);
+</code></pre><blockquote>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5C06;redux&#x6570;&#x636E;&#x6620;&#x5C04;&#x5230;&#x4E86;&#x7EC4;&#x4EF6;&#x81EA;&#x5DF1;&#x7684;&#x72B6;&#x6001;&#xFF0C;&#x5E76;&#x4E14;&#x8BA2;&#x9605;&#x4E86;setState&#x4E8B;&#x4EF6;&#x3002;&#x6BCF;&#x6B21;&#x72B6;&#x6001;&#x66F4;&#x65B0;&#x65F6;&#x90FD;&#x4F1A;&#x91CD;&#x65B0;&#x5237;&#x65B0;&#x7EC4;&#x4EF6;</p>
+</blockquote>
+
+        <div class="copyright">Powered by <a href="https://github.com/jaywcjlove/idoc" target="_blank">idoc</a>. Dependence <a href="https://nodejs.org">Node.js</a> run.</div>
+    </div>
+    
+</div>
+
+
+</body>
+</html>
