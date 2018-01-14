@@ -213,19 +213,263 @@ class School extends React.Component{ // 类上的属性就叫静态属性
 > propTypes和defaultProps名字不能更改，这是react规定好的名称
 
 ### 15.状态的使用
-- setState方法的应用
-- 状态操作的合并
+```
+class Counter extends Component{
+    constructor(){
+        super();
+        this.state = {count:0}
+    };
+    handleClick = ()=>{
+        // setState方法会进行合并 setState有两种写法 一种是对象一种是函数
+        /*this.setState({count:this.state.count+1});
+          this.setState({count:this.state.count+1});*/
+        //this.setState((prevState)=>({count:prevState.count+1})); //如果返回的就是一个对象可以用小括号包裹
+        //this.setState((prevState)=>({count:prevState.count+1}));
+        // 下一个状态是依赖于上一个状态时需要写成函数的方式
+        this.setState({count:this.state.count+1},function () {
+            this.setState({count:this.state.count+1});
+        }); // 这个写法等同于 this.setState((prevState)=>({count:prevState.count+1}));
+    };
+    render(){
+        console.log('render');
+        return (
+            <p>
+                {this.state.count}
+                <button onClick={this.handleClick}>+</button>
+            </p>
+        )
+    }
+}
+ReactDOM.render(<Counter/>,window.root);
+```
+
+> 如果设置多个状态setState会合并，如果下一个状态依赖于上一个状态，需要写成函数的方式
 
 ### 16.复合组件
-- 组件的多次复用
-- 拆分panel组件
+复合组件就是将多个组件进行组合，结构非常复杂时可以把组件分离开
+
+#### 父子组件的通信
+```
+class Panel extends Component{
+    render(){
+        let {header,body} = this.props;
+        return (
+            <div className="container">
+                <div className="panel-default panel">
+                    <Header head={header}></Header>
+                    <Body b={body}/>
+                </div>
+            </div>
+        )
+    }
+} // react种需要将属性一层层向下传递 单向数据流
+class Body extends Component{
+    render(){return (<div className="panel-body">{this.props.b}</div>)}
+}
+class Header extends Component{
+    render(){return (<div className="panel-heading">{this.props.head}</div>)}
+}
+let data = {header:'我非常帅',body:'长的帅'};
+ReactDOM.render(<Panel {...data}/>,window.root);
+```
+
+#### 子父组件的通信
+通过父亲传递给儿子一个函数，儿子调用父亲的函数将值传递给父亲,父亲更新值，刷新视图
+```
+class Panel extends Component{
+    constructor(){
+        super();
+        this.state = {color:'primary'}
+    }
+    changeColor=(color)=>{ //到时候儿子传递一个颜色
+        this.setState({color});
+    };
+    render(){
+        return (
+            <div className="container">
+                <div className={"panel-"+this.state.color+" panel"}>
+                    <Header head={this.props.header}
+                            change={this.changeColor}
+                    ></Header>
+                </div>
+            </div>
+        )
+    }
+}
+class Header extends Component{
+    handleClick = ()=>{
+        this.props.change('danger'); //调用父亲的方法
+    };
+    render(){return (
+        <div className="panel-heading">
+        {this.props.head} <button className="btn btn-danger" onClick={this.handleClick}>改颜色</button>
+        </div>)}
+}
+```
+
+
 
 ### 17.受控组件和非受控组件
+- 受状态控制的组件，必须要有onChange方法，否则不能使用
+- 受控组件可以赋予默认值（官方推荐使用 受控组件）
+
+#### 实现双向数据绑定
+```
+class Input extends Component{
+    constructor(){
+        super();
+        this.state = {val:'100'}
+    }
+    handleChange = (e) =>{ //e是事件源
+        let val = e.target.value;
+        this.setState({val});
+    };
+    render(){
+        return (<div>
+            <input type="text" value={this.state.val} onChange={this.handleChange}/>
+            {this.state.val}
+        </div>)
+    }
+}
+```
+
+#### 受控组件
+```
+class Sum extends Component{
+    constructor(){
+        super();
+        this.state = {a:1,b:1}
+    }
+    // key表示的就是当前状态改的是哪一个
+    // e表示的是事件源
+    handleChange(key,e){ //处理多个输入框的值映射到状态的方法
+        this.setState({
+            [key]:parseInt(e.target.value)||0
+        })
+    }
+    render(){
+        return (
+            <div>
+                <input type="number" value={this.state.a} onChange={e=>{this.handleChange('a',e)}}/>
+                <input type="number" value={this.state.b} onChange={e=>{this.handleChange('b',e)}}/>
+                {this.state.a+this.state.b}
+            </div>
+        )
+    }
+}
+```
+
+#### 非受控组件
+```
+class Sum extends Component{
+    constructor(){
+        super();
+        this.state =  {result:''}
+    }
+    //通过ref设置的属性 可以通过this.refs获取到对应的dom元素
+    handleChange = () =>{
+        let result = this.refs.a.value + this.b.value;
+        this.setState({result});
+    };
+    render(){
+        return (
+            <div onChange={this.handleChange}>
+                <input type="number" ref="a"/>
+                {/*x代表的真实的dom,把元素挂载在了当前实例上*/}
+                <input type="number" ref={(x)=>{
+                    this.b = x;
+                }}/>
+                {this.state.result}
+            </div>
+        )
+    }
+}
+```
+
 
 ### 18.声明周期
+```
+class Counter extends React.Component{ // 他会比较两个状态相等就不会刷新视图 PureComponent是浅比较
+  static defaultProps = {
+    name:'珠峰培训'
+  };
+  constructor(props){
+    super();
+    this.state = {number:0}
+    console.log('1.constructor构造函数')
+  }
+  componentWillMount(){ // 取本地的数据 同步的方式：采用渲染之前获取数据，只渲染一次
+    console.log('2.组件将要加载 componentWillMount');
+  }
+  componentDidMount(){
+    console.log('4.组件挂载完成 componentDidMount');
+  }
+  handleClick=()=>{
+    this.setState({number:this.state.number+1});
+  };
+  // react可以shouldComponentUpdate方法中优化 PureComponent 可以帮我们做这件事
+  shouldComponentUpdate(nextProps,nextState){ // 代表的是下一次的属性 和 下一次的状态
+    console.log('5.组件是否更新 shouldComponentUpdate');
+    return nextState.number%2;
+    // return nextState.number!==this.state.number; //如果此函数种返回了false 就不会调用render方法了
+  } //不要随便用setState 可能会死循环
+  componentWillUpdate(){
+    console.log('6.组件将要更新 componentWillUpdate');
+  }
+  componentDidUpdate(){
+    console.log('7.组件完成更新 componentDidUpdate');
+  }
+  render(){
+    console.log('3.render');
+    return (
+      <div>
+        <p>{this.state.number}</p>
+        {this.state.number>3?null:<ChildCounter n={this.state.number}/>}
+        <button onClick={this.handleClick}>+</button>
+      </div>
+    )
+  }
+}
+class ChildCounter extends Component{
+  componentWillUnmount(){
+    console.log('组件将要卸载componentWillUnmount')
+  }
+  componentWillMount(){
+    console.log('child componentWillMount')
+  }
+  render(){
+    console.log('child-render')
+    return (<div>
+      {this.props.n}
+    </div>)
+  }
+  componentDidMount(){
+    console.log('child componentDidMount')
+  }
+  componentWillReceiveProps(newProps){ // 第一次不会执行，之后属性更新时才会执行
+    console.log('child componentWillReceiveProps')
+  }
+  shouldComponentUpdate(nextProps,nextState){
+    return nextProps.n%3; //子组件判断接收的属性 是否满足更新条件 为true则更新
+  }
+}
+// defaultProps
+// constructor
+// componentWillMount
+// render
+// componentDidMount
+// 状态更新会触发的
+// shouldComponentUpdate nextProps,nextState=>boolean
+// componentWillUpdate
+// componentDidUpdate
+// 属性更新
+// componentWillReceiveProps newProps
+// 卸载
+// componentWillUnmount
+```
+
+![lifeCycle](http://son.fullstackjavascript.cn/lifeCycle.png)
 
 ### 19.评论面板
-
 ### 20.React实现百度搜索框
-
 ### 21.react轮播图考试
