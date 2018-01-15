@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>珠峰培训React教程</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/main.css">
+</head>
+<body>
+<div class="nav">
+    <div class="logo">
+        
+            珠峰培训React教程
+        
+    </div>
+<ul><li><a href="../index.html">React基础篇</a></li><li><a href="../html/Redux应用.html">Redux应用</a></li><li><a href="../html/Redux深入.html">Redux深入</a></li><li class="active"><a href="../html/React-Redux.html">React-Redux</a></li><li><a href="../html/MiddleWare应用.html">MiddleWare应用</a></li></ul></div>
+
+
+<div class="warpper">
+
+    <div class="page-toc">
+        <ul><li><a href="#t0React-Redux应用">React-Redux应用</a><ul><li><a href="#t11.为什么需要高阶组件">1.为什么需要高阶组件</a></li><li><a href="#t22.实现高阶组件">2.实现高阶组件</a></li><li><a href="#t33.context的用法">3.context的用法</a></li><li><a href="#t44.使用react-redux实现todo">4.使用react-redux实现todo</a></li><li><a href="#t55.实现react-redux库">5.实现react-redux库</a></li><li><a href="#t66.redux中bindActionCreators方法">6.redux中bindActionCreators方法</a></li></ul></li></ul>
+    </div>
+    
+    <div class="content markdown-body">
+        <h2 id="t0React-Redux&#x5E94;&#x7528;">React-Redux&#x5E94;&#x7528; <a href="#t0React-Redux&#x5E94;&#x7528;"> # </a></h2>
+<h3 id="t11.&#x4E3A;&#x4EC0;&#x4E48;&#x9700;&#x8981;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6;">1.&#x4E3A;&#x4EC0;&#x4E48;&#x9700;&#x8981;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6; <a href="#t11.&#x4E3A;&#x4EC0;&#x4E48;&#x9700;&#x8981;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6;"> # </a></h3>
+<p>&#x6211;&#x4EEC;&#x5148;&#x770B;&#x4E00;&#x4E2A;&#x975E;&#x5E38;&#x5E38;&#x89C1;&#x7684;&#x4F8B;&#x5B50;&#xFF0C;&#x4E00;&#x4E2A;&#x8F93;&#x5165;&#x6846;&#x9700;&#x8981;&#x4ECE;&#x672C;&#x5730;&#x83B7;&#x53D6;&#x6570;&#x636E;&#x5C06;&#x83B7;&#x53D6;&#x7684;&#x6570;&#x636E;&#x653E;&#x5230;&#x8F93;&#x5165;&#x6846;&#x5185;</p>
+<pre><code>export default class Username extends React.Component {
+  constructor(){
+    super();
+    this.state = {val:&apos;&apos;}
+  }
+  componentDidMount(){
+    let username = localStorage.getItem(&apos;username&apos;)||&apos;&apos;;
+    this.setState({
+      val:username
+    })
+  }
+  render(){
+    return &lt;div&gt;
+      &lt;input type=&quot;text&quot; value={this.state.val} onChange={()=&gt;{}}/&gt;
+    &lt;/div&gt;
+  }
+}
+</code></pre><blockquote>
+<p>&#x8FD9;&#x6BB5;&#x903B;&#x8F91;&#x53EF;&#x80FD;&#x5728;Password&#x7EC4;&#x4EF6;&#x4E2D;&#x4E5F;&#x8981;&#x4F7F;&#x7528;&#xFF0C;&#x90A3;&#x4E48;&#x4ECE;&#x672C;&#x5730;&#x5B58;&#x50A8;&#x4E2D;&#x83B7;&#x53D6;&#x6570;&#x636E;&#x653E;&#x5230;&#x8F93;&#x5165;&#x6846;&#x5185;&#x7684;&#x903B;&#x8F91;&#x5E94;&#x8BE5;&#x5C31;&#x662F;&#x516C;&#x7528;&#x903B;&#x8F91;&#x3002;&#x8FD9;&#x65F6;&#x6211;&#x4EEC;&#x5C31;&#x8981;&#x4F7F;&#x7528;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x5C06;&#x7EC4;&#x4EF6;&#x5728;&#x539F;&#x6709;&#x7684;&#x57FA;&#x7840;&#x4E0A;&#x8FDB;&#x884C;&#x5305;&#x88C5;&#x3002;</p>
+</blockquote>
+<h3 id="t22.&#x5B9E;&#x73B0;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6;">2.&#x5B9E;&#x73B0;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6; <a href="#t22.&#x5B9E;&#x73B0;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6;"> # </a></h3>
+<pre><code>import React from &apos;react&apos;;
+let local = (key)=&gt;(Component)=&gt;{
+  return class HighOrderComponent extends React.Component{
+    constructor(){
+      super();
+      this.state = {val:&apos;&apos;}
+    }
+    componentDidMount(){
+      let username = localStorage.getItem(key)||&apos;&apos;;
+      this.setState({
+        val:username
+      })
+    }
+    render(){
+      return &lt;Component {...this.state}/&gt;
+    }
+  }
+};
+export default local;
+
+import Local from &apos;./Local&apos;
+class Username extends React.Component {
+  render(){
+    return &lt;div&gt;
+      &lt;input type=&quot;text&quot; value={this.props.val} onChange={()=&gt;{}}/&gt;
+    &lt;/div&gt;
+  }
+}
+export default Local(&apos;username&apos;)(Username);
+</code></pre><blockquote>
+<p>&#x6211;&#x4EEC;&#x5C06;&#x516C;&#x5171;&#x7684;&#x903B;&#x8F91;&#x62FF;&#x5230;&#x5916;&#x5C42;&#x7EC4;&#x4EF6;&#xFF0C;&#x5904;&#x7406;&#x597D;&#x540E;&#x4EE5;&#x5C5E;&#x6027;&#x7684;&#x65B9;&#x5F0F;&#x4F20;&#x9012;&#x7ED9;&#x539F;&#x672C;&#x7684;&#x7EC4;&#x4EF6;&#xFF0C;&#x4E3A;&#x6B64;&#x9AD8;&#x9636;&#x7EC4;&#x4EF6;&#x5C31;&#x662F;&#x4E00;&#x4E2A; React &#x7EC4;&#x4EF6;&#x5305;&#x88F9;&#x7740;&#x53E6;&#x5916;&#x4E00;&#x4E2A; React &#x7EC4;&#x4EF6;</p>
+</blockquote>
+<h3 id="t33.context&#x7684;&#x7528;&#x6CD5;">3.context&#x7684;&#x7528;&#x6CD5; <a href="#t33.context&#x7684;&#x7528;&#x6CD5;"> # </a></h3>
+<p>react&#x662F;&#x5355;&#x5411;&#x6570;&#x636E;&#x6D41;&#xFF0C;&#x6211;&#x4EEC;&#x60F3;&#x4F20;&#x9012;&#x6570;&#x636E;&#x9700;&#x8981;&#x4E00;&#x5C42;&#x5C42;&#x5411;&#x4E0B;&#x4F20;&#x9012;&#xFF0C;&#x6570;&#x636E;&#x4F20;&#x9012;&#x53D8;&#x5F97;&#x975E;&#x5E38;&#x9EBB;&#x70E6;,&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x7528;context&#x5B9E;&#x73B0;&#x6570;&#x636E;&#x7684;&#x4EA4;&#x4E92;</p>
+<p>1) &#x7236; childContextTypes getChildContext&#x51FD;&#x6570;</p>
+<p>2) &#x5B50; contextTypes</p>
+<pre><code>App |-&gt; header -&gt; title
+    |-&gt; content
+</code></pre><h3 id="t44.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo">4.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo <a href="#t44.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo"> # </a></h3>
+<pre><code>Todos |-&gt; TodoHeader
+      |-&gt; TodoItems
+      |-&gt; TodoFooter
+</code></pre><h3 id="t55.&#x5B9E;&#x73B0;react-redux&#x5E93;">5.&#x5B9E;&#x73B0;react-redux&#x5E93; <a href="#t55.&#x5B9E;&#x73B0;react-redux&#x5E93;"> # </a></h3>
+<h3 id="t66.redux&#x4E2D;bindActionCreators&#x65B9;&#x6CD5;">6.redux&#x4E2D;bindActionCreators&#x65B9;&#x6CD5; <a href="#t66.redux&#x4E2D;bindActionCreators&#x65B9;&#x6CD5;"> # </a></h3>
+
+        <div class="copyright">Powered by <a href="https://github.com/jaywcjlove/idoc" target="_blank">idoc</a>. Dependence <a href="https://nodejs.org">Node.js</a> run.</div>
+    </div>
+    
+</div>
+
+
+</body>
+</html>

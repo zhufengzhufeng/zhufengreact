@@ -13,13 +13,13 @@
             珠峰培训React教程
         
     </div>
-<ul><li><a href="../index.html">React基础篇</a></li><li><a href="../html/Redux应用.html">Redux应用</a></li><li class="active"><a href="../html/Redux深入.html">Redux深入</a></li></ul></div>
+<ul><li><a href="../index.html">React基础篇</a></li><li><a href="../html/Redux应用.html">Redux应用</a></li><li class="active"><a href="../html/Redux深入.html">Redux深入</a></li><li><a href="../html/React-Redux.html">React-Redux</a></li><li><a href="../html/MiddleWare应用.html">MiddleWare应用</a></li></ul></div>
 
 
 <div class="warpper">
 
     <div class="page-toc">
-        <ul><li><a href="#t0Redux深入">Redux深入</a><ul><li><a href="#t11.redux文件拆分">1.redux文件拆分</a></li><li><a href="#t22.在react中使用redux(willUnmount触发多次)(分离操作)">2.在react中使用redux(willUnmount触发多次)(分离操作)</a></li><li><a href="#t33.多个counter -> combineReducers">3.多个counter -> combineReducers</a></li><li><a href="#t44.增加actionCreator">4.增加actionCreator</a></li><li><a href="#t55.高阶组件 -> 本地取出数据传递给js组件(mixin)">5.高阶组件 -> 本地取出数据传递给js组件(mixin)</a></li><li><a href="#t66.Post 发送ajax fetch的用法">6.Post 发送ajax fetch的用法</a></li><li><a href="#t77.context的用法">7.context的用法</a></li><li><a href="#t88.使用react-redux 实现todo (mapPropsToDispatch)">8.使用react-redux 实现todo (mapPropsToDispatch)</a></li><li><a href="#t99.计数器 -> 实现react-redux">9.计数器 -> 实现react-redux</a></li><li><a href="#t1010.bindActionCreators">10.bindActionCreators</a></li><li><a href="#t1111.store.dispatch的改写 分析中间件 state,dispatch,action">11.store.dispatch的改写 分析中间件 state,dispatch,action</a></li><li><a href="#t1212.logger -> applyMiddleware">12.logger -> applyMiddleware</a></li><li><a href="#t1313.redux-thunk (action中进行更改)">13.redux-thunk (action中进行更改)</a></li><li><a href="#t1414.redux-promise (payload的用法)">14.redux-promise (payload的用法)</a></li><li><a href="#t1515.compose函数">15.compose函数</a></li><li><a href="#t1616.更新applyMiddleware">16.更新applyMiddleware</a></li></ul></li></ul>
+        <ul><li><a href="#t0Redux深入">Redux深入</a><ul><li><a href="#t11.redux文件拆分">1.redux文件拆分</a></li><li><a href="#t22.实现多个counter">2.实现多个counter</a></li></ul></li></ul>
     </div>
     
     <div class="content markdown-body">
@@ -141,28 +141,93 @@
 <p>&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x5C06;redux&#x7684;&#x6D41;&#x7A0B;&#x8FDB;&#x884C;&#x4E86;&#x8BE6;&#x7EC6;&#x7684;&#x62C6;&#x5206;,&#x8BA9;&#x6211;&#x4EEC;&#x6765;&#x603B;&#x7ED3;&#x4E00;&#x4E0B;redux&#x7684;&#x6D41;&#x7A0B;&#x5427;&#xFF1A;</p>
 </blockquote>
 <p><img src="http://son.fullstackjavascript.cn/redux.png" alt=""></p>
-<h3 id="t22.&#x5728;react&#x4E2D;&#x4F7F;&#x7528;redux(willUnmount&#x89E6;&#x53D1;&#x591A;&#x6B21;)(&#x5206;&#x79BB;&#x64CD;&#x4F5C;)">2.&#x5728;react&#x4E2D;&#x4F7F;&#x7528;redux(willUnmount&#x89E6;&#x53D1;&#x591A;&#x6B21;)(&#x5206;&#x79BB;&#x64CD;&#x4F5C;) <a href="#t22.&#x5728;react&#x4E2D;&#x4F7F;&#x7528;redux(willUnmount&#x89E6;&#x53D1;&#x591A;&#x6B21;)(&#x5206;&#x79BB;&#x64CD;&#x4F5C;)"> # </a></h3>
-<h3 id="t33.&#x591A;&#x4E2A;counter -&gt; combineReducers">3.&#x591A;&#x4E2A;counter -&gt; combineReducers <a href="#t33.&#x591A;&#x4E2A;counter -&gt; combineReducers"> # </a></h3>
-<h3 id="t44.&#x589E;&#x52A0;actionCreator">4.&#x589E;&#x52A0;actionCreator <a href="#t44.&#x589E;&#x52A0;actionCreator"> # </a></h3>
-<h3 id="t55.&#x9AD8;&#x9636;&#x7EC4;&#x4EF6; -&gt; &#x672C;&#x5730;&#x53D6;&#x51FA;&#x6570;&#x636E;&#x4F20;&#x9012;&#x7ED9;js&#x7EC4;&#x4EF6;(mixin)">5.&#x9AD8;&#x9636;&#x7EC4;&#x4EF6; -&gt; &#x672C;&#x5730;&#x53D6;&#x51FA;&#x6570;&#x636E;&#x4F20;&#x9012;&#x7ED9;js&#x7EC4;&#x4EF6;(mixin) <a href="#t55.&#x9AD8;&#x9636;&#x7EC4;&#x4EF6; -&gt; &#x672C;&#x5730;&#x53D6;&#x51FA;&#x6570;&#x636E;&#x4F20;&#x9012;&#x7ED9;js&#x7EC4;&#x4EF6;(mixin)"> # </a></h3>
-<h3 id="t66.Post &#x53D1;&#x9001;ajax fetch&#x7684;&#x7528;&#x6CD5;">6.Post &#x53D1;&#x9001;ajax fetch&#x7684;&#x7528;&#x6CD5; <a href="#t66.Post &#x53D1;&#x9001;ajax fetch&#x7684;&#x7528;&#x6CD5;"> # </a></h3>
-<h3 id="t77.context&#x7684;&#x7528;&#x6CD5;">7.context&#x7684;&#x7528;&#x6CD5; <a href="#t77.context&#x7684;&#x7528;&#x6CD5;"> # </a></h3>
-<pre><code>1) &#x7236; childContextTypes getChildContext&#x51FD;&#x6570;
-2) &#x5B50; contextTypes
-</code></pre><p>App |-&gt; header -&gt; title
-    |-&gt; content</p>
-<h3 id="t88.&#x4F7F;&#x7528;react-redux &#x5B9E;&#x73B0;todo (mapPropsToDispatch)">8.&#x4F7F;&#x7528;react-redux &#x5B9E;&#x73B0;todo (mapPropsToDispatch) <a href="#t88.&#x4F7F;&#x7528;react-redux &#x5B9E;&#x73B0;todo (mapPropsToDispatch)"> # </a></h3>
-<p>Todos |-&gt; TodoHeader
-      |-&gt; TodoItems
-      |-&gt; TodoFooter</p>
-<h3 id="t99.&#x8BA1;&#x6570;&#x5668; -&gt; &#x5B9E;&#x73B0;react-redux">9.&#x8BA1;&#x6570;&#x5668; -&gt; &#x5B9E;&#x73B0;react-redux <a href="#t99.&#x8BA1;&#x6570;&#x5668; -&gt; &#x5B9E;&#x73B0;react-redux"> # </a></h3>
-<h3 id="t1010.bindActionCreators">10.bindActionCreators <a href="#t1010.bindActionCreators"> # </a></h3>
-<h3 id="t1111.store.dispatch&#x7684;&#x6539;&#x5199; &#x5206;&#x6790;&#x4E2D;&#x95F4;&#x4EF6; state,dispatch,action">11.store.dispatch&#x7684;&#x6539;&#x5199; &#x5206;&#x6790;&#x4E2D;&#x95F4;&#x4EF6; state,dispatch,action <a href="#t1111.store.dispatch&#x7684;&#x6539;&#x5199; &#x5206;&#x6790;&#x4E2D;&#x95F4;&#x4EF6; state,dispatch,action"> # </a></h3>
-<h3 id="t1212.logger -&gt; applyMiddleware">12.logger -&gt; applyMiddleware <a href="#t1212.logger -&gt; applyMiddleware"> # </a></h3>
-<h3 id="t1313.redux-thunk (action&#x4E2D;&#x8FDB;&#x884C;&#x66F4;&#x6539;)">13.redux-thunk (action&#x4E2D;&#x8FDB;&#x884C;&#x66F4;&#x6539;) <a href="#t1313.redux-thunk (action&#x4E2D;&#x8FDB;&#x884C;&#x66F4;&#x6539;)"> # </a></h3>
-<h3 id="t1414.redux-promise (payload&#x7684;&#x7528;&#x6CD5;)">14.redux-promise (payload&#x7684;&#x7528;&#x6CD5;) <a href="#t1414.redux-promise (payload&#x7684;&#x7528;&#x6CD5;)"> # </a></h3>
-<h3 id="t1515.compose&#x51FD;&#x6570;">15.compose&#x51FD;&#x6570; <a href="#t1515.compose&#x51FD;&#x6570;"> # </a></h3>
-<h3 id="t1616.&#x66F4;&#x65B0;applyMiddleware">16.&#x66F4;&#x65B0;applyMiddleware <a href="#t1616.&#x66F4;&#x65B0;applyMiddleware"> # </a></h3>
+<h3 id="t22.&#x5B9E;&#x73B0;&#x591A;&#x4E2A;counter">2.&#x5B9E;&#x73B0;&#x591A;&#x4E2A;counter <a href="#t22.&#x5B9E;&#x73B0;&#x591A;&#x4E2A;counter"> # </a></h3>
+<p>&#x5728;redux&#x4E2D;&#x53EA;&#x80FD;&#x62E5;&#x6709;&#x4E00;&#x4E2A;store&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5C06;&#x591A;&#x4E2A;&#x72B6;&#x6001;&#x8FDB;&#x884C;&#x5408;&#x5E76;,&#x72B6;&#x6001;&#x662F;&#x901A;&#x8FC7;reducer&#x8FD4;&#x56DE;&#x7684;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5C06;&#x591A;&#x4E2A;reducer&#x8FDB;&#x884C;&#x5408;&#x5E76;&#x8FBE;&#x5230;&#x5408;&#x5E76;&#x72B6;&#x6001;&#x7684;&#x76EE;&#x7684;&#x3002;</p>
+<pre><code>&#x2502;  index.js
+&#x2502;  redux.js
+&#x2502;
+&#x251C;&#x2500;components
+&#x2502;      counter1.js
+&#x2502;      counter2.js
+&#x2502;
+&#x2514;&#x2500;store
+    &#x2502;  action-types.js
+    &#x2502;  index.js
+    &#x2502;
+    &#x251C;&#x2500;actions
+    &#x2502;      counter1.js
+    &#x2502;      counter2.js
+    &#x2502;
+    &#x2514;&#x2500;reducer
+            counter1.js
+            counter2.js
+            index.js
+</code></pre><blockquote>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5C06;counter1&#x7684;&#x903B;&#x8F91;&#x8FDB;&#x884C;&#x62F7;&#x8D1D;&#xFF0C;&#x7C98;&#x8D34;&#x51FA;counter2</p>
+</blockquote>
+<ul>
+<li><p>action-types&#x65B0;&#x589E;counter2&#x5904;&#x7406;&#x7684;&#x5E38;&#x91CF;</p>
+<pre><code class="lang-diff">  export const ADD = &apos;ADD&apos;;
+  export const MINUS = &apos;MINUS&apos;;
+
+  + export const INCREMENT = &apos;INCREMENT&apos;;
+  + export const DECREMENT = &apos;DECREMENT&apos;;
+</code></pre>
+</li>
+<li><p>&#x5BF9;&#x5E94;&#x7684;counter2&#x4E2D;&#x7684;action&#x4E5F;&#x8FDB;&#x884C;&#x66F4;&#x6539;</p>
+<pre><code>  import * as Types from &apos;../action-types&apos;
+  export default {
+    add(amount){
+      return {type:Types.INCREMENT,amount}
+    },
+    minus(amount){
+      return {type:Types.DECREMENT,amount}
+    }
+  }
+</code></pre></li>
+<li><p>&#x540C;&#x6837;reducer&#x4E2D;&#x5904;&#x7406;&#x4E5F;&#x662F;&#x4E00;&#x6837;&#x7684;</p>
+<pre><code>  import * as Types from &apos;../action-types&apos;
+  export default function reducer(state={number:0},action) {
+    switch (action.type){
+      case Types.INCREMENT:
+        return {number:state.number + action.amount};
+      case Types.DECREMENT:
+        return {number:state.number - action.amount};
+    }
+    return state;
+  }
+</code></pre><blockquote>
+<p>&#x73B0;&#x5728;&#x95EE;&#x9898;&#x51FA;&#x73B0;&#x4E86;&#x6211;&#x4EEC;&#x62E5;&#x6709;&#x4E86;&#x4E24;&#x4E2A;reducer,&#x6211;&#x4EEC;&#x8981;&#x5C06;&#x4E24;&#x4E2A;reducer&#x8FDB;&#x884C;&#x5408;&#x5E76;,&#x5408;&#x5E76;&#x6210;&#x4E00;&#x4E2A;&#x65B0;&#x7684;reducer</p>
+</blockquote>
+</li>
+<li><p>combineReducers</p>
+<pre><code> import counter1 from &apos;./counter1&apos;;
+ import counter2 from &apos;./counter2&apos;;
+ let combineReducers = (reducers) =&gt; {
+   return (state={},action)=&gt;{
+     let obj = {};
+     for(let key in reducers){
+       obj[key] = reducers[key](state[key],action); //&#x8C03;&#x7528;&#x539F;&#x6709;&#x7684;reducer&#x5C06;&#x8FD4;&#x56DE;&#x7684;&#x7ED3;&#x679C;&#x653E;&#x5230;&#x5BF9;&#x8C61;&#x4E0A;
+     }
+     return obj; // &#x5C06;&#x5408;&#x5E76;&#x540E;&#x7684;&#x5BF9;&#x8C61;&#x8FDB;&#x884C;&#x8FD4;&#x56DE;&#x5373;&#x53EF; {counter1:{number:0},counter2:{number:0}}
+   }
+ };
+ export default combineReducers({
+   counter1,counter2
+ });
+</code></pre></li>
+<li><p>&#x6700;&#x540E;&#x7EC4;&#x4EF6;&#x4E2D;&#x83B7;&#x53D6;&#x72B6;&#x6001;&#x8981;&#x589E;&#x52A0;&#x5408;&#x5E76;&#x65F6;&#x7684;&#x547D;&#x540D;&#x7A7A;&#x95F4;&#x6765;&#x83B7;&#x53D6;</p>
+<pre><code>  constructor(){
+      super();
+      this.state = {number:store.getState().counter1.number}
+  }
+  componentDidMount(){
+      store.subscribe( () =&gt; {
+          this.setState({number:store.getState().counter1.number})
+      })
+  }
+</code></pre></li>
+</ul>
 
         <div class="copyright">Powered by <a href="https://github.com/jaywcjlove/idoc" target="_blank">idoc</a>. Dependence <a href="https://nodejs.org">Node.js</a> run.</div>
     </div>

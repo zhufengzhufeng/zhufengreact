@@ -128,30 +128,105 @@ store
 ![](http://son.fullstackjavascript.cn/redux.png)
 
 
+### 2.实现多个counter
+在redux中只能拥有一个store所以我们需要将多个状态进行合并,状态是通过reducer返回的，所以我们可以将多个reducer进行合并达到合并状态的目的。
+```
+│  index.js
+│  redux.js
+│
+├─components
+│      counter1.js
+│      counter2.js
+│
+└─store
+    │  action-types.js
+    │  index.js
+    │
+    ├─actions
+    │      counter1.js
+    │      counter2.js
+    │
+    └─reducer
+            counter1.js
+            counter2.js
+            index.js
+```
+
+> 这里我们将counter1的逻辑进行拷贝，粘贴出counter2
+
+- action-types新增counter2处理的常量
+
+    ```diff
+    export const ADD = 'ADD';
+    export const MINUS = 'MINUS';
+
+    + export const INCREMENT = 'INCREMENT';
+    + export const DECREMENT = 'DECREMENT';
+    ```
+
+- 对应的counter2中的action也进行更改
+
+    ```
+    import * as Types from '../action-types'
+    export default {
+      add(amount){
+        return {type:Types.INCREMENT,amount}
+      },
+      minus(amount){
+        return {type:Types.DECREMENT,amount}
+      }
+    }
+    ```
+
+- 同样reducer中处理也是一样的
+
+    ```
+    import * as Types from '../action-types'
+    export default function reducer(state={number:0},action) {
+      switch (action.type){
+        case Types.INCREMENT:
+          return {number:state.number + action.amount};
+        case Types.DECREMENT:
+          return {number:state.number - action.amount};
+      }
+      return state;
+    }
+    ```
+
+    > 现在问题出现了我们拥有了两个reducer,我们要将两个reducer进行合并,合并成一个新的reducer
+
+-  combineReducers
+    ```
+    import counter1 from './counter1';
+    import counter2 from './counter2';
+    let combineReducers = (reducers) => {
+      return (state={},action)=>{
+        let obj = {};
+        for(let key in reducers){
+          obj[key] = reducers[key](state[key],action); //调用原有的reducer将返回的结果放到对象上
+        }
+        return obj; // 将合并后的对象进行返回即可 {counter1:{number:0},counter2:{number:0}}
+      }
+    };
+    export default combineReducers({
+      counter1,counter2
+    });
+    ```
+
+- 最后组件中获取状态要增加合并时的命名空间来获取
+    ```
+    constructor(){
+        super();
+        this.state = {number:store.getState().counter1.number}
+    }
+    componentDidMount(){
+        store.subscribe( () => {
+            this.setState({number:store.getState().counter1.number})
+        })
+    }
+    ```
 
 
 
-### 2.在react中使用redux(willUnmount触发多次)(分离操作)
-### 3.多个counter -> combineReducers
-### 4.增加actionCreator
-### 5.高阶组件 -> 本地取出数据传递给js组件(mixin)
-### 6.Post 发送ajax fetch的用法
-### 7.context的用法
-    1) 父 childContextTypes getChildContext函数
-    2) 子 contextTypes
 
-App |-> header -> title
-    |-> content
 
-### 8.使用react-redux 实现todo (mapPropsToDispatch)
-Todos |-> TodoHeader
-      |-> TodoItems
-      |-> TodoFooter
-### 9.计数器 -> 实现react-redux
-### 10.bindActionCreators
-### 11.store.dispatch的改写 分析中间件 state,dispatch,action
-### 12.logger -> applyMiddleware
-### 13.redux-thunk (action中进行更改)
-### 14.redux-promise (payload的用法)
-### 15.compose函数
-### 16.更新applyMiddleware
