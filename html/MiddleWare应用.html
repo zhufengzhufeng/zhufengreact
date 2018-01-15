@@ -19,18 +19,172 @@
 <div class="warpper">
 
     <div class="page-toc">
-        <ul><li><a href="#t0MiddleWare的使用">MiddleWare的使用</a><ul><li><a href="#t11.store.dispatch的改写">1.store.dispatch的改写</a></li><li><a href="#t22.实现logger中间件">2.实现logger中间件</a></li><li><a href="#t33.实现redux-thunk中间件">3.实现redux-thunk中间件</a></li><li><a href="#t44.实现redux-promise中间件">4.实现redux-promise中间件</a></li><li><a href="#t55.compose函数">5.compose函数</a></li><li><a href="#t66.applyMiddleware实现">6.applyMiddleware实现</a></li></ul></li></ul>
+        <ul><li><a href="#t0MiddleWare的使用">MiddleWare的使用</a><ul><li><a href="#t11.logger中间件">1.logger中间件</a><ul><li><a href="#t2实现logger中间件">实现logger中间件</a></li></ul></li><li><a href="#t32.实现redux-thunk中间件">2.实现redux-thunk中间件</a></li><li><a href="#t43.实现redux-promise中间件">3.实现redux-promise中间件</a></li><li><a href="#t54.compose应用">4.compose应用</a><ul><li><a href="#t6实现compose">实现compose</a></li></ul></li><li><a href="#t75.applyMiddleware实现">5.applyMiddleware实现</a></li><li><a href="#t86.简化applyMiddleWare应用">6.简化applyMiddleWare应用</a></li></ul></li></ul>
     </div>
     
     <div class="content markdown-body">
         <h2 id="t0MiddleWare&#x7684;&#x4F7F;&#x7528;">MiddleWare&#x7684;&#x4F7F;&#x7528; <a href="#t0MiddleWare&#x7684;&#x4F7F;&#x7528;"> # </a></h2>
-<h3 id="t11.store.dispatch&#x7684;&#x6539;&#x5199;">1.store.dispatch&#x7684;&#x6539;&#x5199; <a href="#t11.store.dispatch&#x7684;&#x6539;&#x5199;"> # </a></h3>
-<h3 id="t22.&#x5B9E;&#x73B0;logger&#x4E2D;&#x95F4;&#x4EF6;">2.&#x5B9E;&#x73B0;logger&#x4E2D;&#x95F4;&#x4EF6; <a href="#t22.&#x5B9E;&#x73B0;logger&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h3>
-<h3 id="t33.&#x5B9E;&#x73B0;redux-thunk&#x4E2D;&#x95F4;&#x4EF6;">3.&#x5B9E;&#x73B0;redux-thunk&#x4E2D;&#x95F4;&#x4EF6; <a href="#t33.&#x5B9E;&#x73B0;redux-thunk&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h3>
-<h3 id="t44.&#x5B9E;&#x73B0;redux-promise&#x4E2D;&#x95F4;&#x4EF6;">4.&#x5B9E;&#x73B0;redux-promise&#x4E2D;&#x95F4;&#x4EF6; <a href="#t44.&#x5B9E;&#x73B0;redux-promise&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h3>
-<h3 id="t55.compose&#x51FD;&#x6570;">5.compose&#x51FD;&#x6570; <a href="#t55.compose&#x51FD;&#x6570;"> # </a></h3>
-<h3 id="t66.applyMiddleware&#x5B9E;&#x73B0;">6.applyMiddleware&#x5B9E;&#x73B0; <a href="#t66.applyMiddleware&#x5B9E;&#x73B0;"> # </a></h3>
-
+<h3 id="t11.logger&#x4E2D;&#x95F4;&#x4EF6;">1.logger&#x4E2D;&#x95F4;&#x4EF6; <a href="#t11.logger&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h3>
+<p>&#x6211;&#x4EEC;&#x6539;&#x5199;&#x4E86;&#xFF0C;dispatch&#x65B9;&#x6CD5;&#x5B9E;&#x73B0;&#x4E86;&#x5728;&#x66F4;&#x6539;&#x72B6;&#x6001;&#x65F6;&#x6253;&#x5370;&#x524D;&#x540E;&#x7684;&#x72B6;&#x6001;,&#x4F46;&#x662F;&#x8FD9;&#x79CD;&#x65B9;&#x6848;&#x5E76;&#x4E0D;&#x597D;&#x3002;&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x91C7;&#x7528;&#x4E2D;&#x95F4;&#x7684;&#x65B9;&#x5F0F;&#x3002;</p>
+<pre><code>let store = createStore(reducer);
+let dispatch = store.dispatch;
+store.dispatch = function (action) {
+  console.log(store.getState().number);
+  dispatch(action);
+  console.log(store.getState().number)
+};
+export default store;
+</code></pre><h4 id="t2&#x5B9E;&#x73B0;logger&#x4E2D;&#x95F4;&#x4EF6;">&#x5B9E;&#x73B0;logger&#x4E2D;&#x95F4;&#x4EF6; <a href="#t2&#x5B9E;&#x73B0;logger&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h4>
+<pre><code>let logger = store =&gt; dispatch =&gt; action=&gt;{
+  console.log(store.getState().number);
+  dispatch(action);
+  console.log(store.getState().number)
+};
+let applyMiddleWare = middleware =&gt; createStore =&gt; reducer =&gt;{
+  let store = createStore(reducer);
+  let middle = middleware(store);
+  let dispatch = middle(store.dispatch);
+  return { //&#x5C06;&#x4E2D;&#x95F4;&#x8FD4;&#x56DE;&#x7684;dispatch&#x65B9;&#x6CD5;&#x8986;&#x76D6;&#x6389;&#x539F;&#x6709;store&#x4E2D;&#x7684;dispatch
+    ...store,
+    dispatch
+  }
+};
+export default applyMiddleWare(logger)(createStore)(reducer);
+</code></pre><h3 id="t32.&#x5B9E;&#x73B0;redux-thunk&#x4E2D;&#x95F4;&#x4EF6;">2.&#x5B9E;&#x73B0;redux-thunk&#x4E2D;&#x95F4;&#x4EF6; <a href="#t32.&#x5B9E;&#x73B0;redux-thunk&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h3>
+<p>&#x5B9E;&#x73B0;&#x6D3E;&#x53D1;&#x5F02;&#x6B65;&#x52A8;&#x4F5C;,actionCreator&#x53EF;&#x4EE5;&#x8FD4;&#x56DE;&#x51FD;&#x6570;&#xFF0C;&#x53EF;&#x4EE5;&#x628A;dispatch&#x7684;&#x6743;&#x9650;&#x4EA4;&#x7ED9;&#x6B64;&#x51FD;&#x6570;</p>
+<pre><code>// action
+export default {
+  add(amount){
+    return function (dispatch,getState) {
+      dispatch({type:Types.ADD,amount});
+      dispatch({type:Types.ADD,amount});
+      console.log(getState().number);
+    }
+  },
+  minus(amount){
+    return {type:Types.MINUS,amount}
+  }
+}
+// store/index.js
+let reduxThunk = store =&gt; dispatch =&gt; action=&gt;{
+  if(typeof action === &apos;function&apos;){ //&#x5982;&#x679C;&#x662F;&#x51FD;&#x6570;&#x5C06;&#x6D3E;&#x53D1;&#x7684;&#x6743;&#x9650;&#x4F20;&#x9012;&#x7ED9;&#x51FD;&#x6570;
+    return action(dispatch,store.getState);
+  }
+  dispatch(action);
+};
+</code></pre><h3 id="t43.&#x5B9E;&#x73B0;redux-promise&#x4E2D;&#x95F4;&#x4EF6;">3.&#x5B9E;&#x73B0;redux-promise&#x4E2D;&#x95F4;&#x4EF6; <a href="#t43.&#x5B9E;&#x73B0;redux-promise&#x4E2D;&#x95F4;&#x4EF6;"> # </a></h3>
+<pre><code>// action
+minus(amount){
+    return {
+      type:Types.MINUS,
+      payload:new Promise(function (resolve,reject) {
+        reject({amount:2});
+      })
+    }
+}
+//store/index.js
+let reduxPromise = store =&gt; dispatch =&gt; action=&gt;{
+  if(action.then){
+    return action.then(dispatch); //&#x53EA;&#x652F;&#x6301;&#x6210;&#x529F;
+  }else if(action.payload&amp;&amp;action.payload.then){
+    // &#x5982;&#x679C;payload&#x662F;&#x4E00;&#x4E2A;promise &#x4F1A;&#x5BF9;&#x6210;&#x529F;&#x548C;&#x5931;&#x8D25;&#x90FD;&#x8FDB;&#x884C;&#x6355;&#x83B7;&#x5E76;&#x4E14;&#x5C06;&#x6210;&#x529F;&#x6216;&#x5931;&#x8D25;&#x7684;&#x6570;&#x636E;&#x653E;&#x5230;payload&#x4E2D;&#x8FDB;&#x884C;&#x6D3E;&#x53D1;
+    return action.payload.then(function (data) {
+      dispatch({...action,payload:data});
+    },function (data) {
+      dispatch({...action,payload:data});
+    })
+  }
+  dispatch(action);
+};
+</code></pre><h3 id="t54.compose&#x5E94;&#x7528;">4.compose&#x5E94;&#x7528; <a href="#t54.compose&#x5E94;&#x7528;"> # </a></h3>
+<pre><code>function toResult(who,decorator) {
+  return who+decorator;
+}
+function len(str) {
+  return str.length
+}
+// &#x6211;&#x4EEC;&#x7684;&#x76EE;&#x7684;&#x662F;&#x5C06;&#x7B2C;&#x4E00;&#x4E2A;&#x51FD;&#x6570;&#x7684;&#x8FD4;&#x56DE;&#x7ED3;&#x679C;&#x4F20;&#x9012;&#x7ED9;&#x7B2C;&#x4E8C;&#x4E2A;&#x51FD;&#x6570;
+console.log(len(toResult(&apos;Mrs jiang&apos;, &apos;&#x5F88;&#x5E05;&apos;)));
+</code></pre><h4 id="t6&#x5B9E;&#x73B0;compose">&#x5B9E;&#x73B0;compose <a href="#t6&#x5B9E;&#x73B0;compose"> # </a></h4>
+<p>&#x8FD9;&#x4E2A;compose&#x4E5F;&#x662F;redux&#x4E2D;&#x7684;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;</p>
+<pre><code>let compose = (...fns)=&gt;(...args)=&gt; {
+  let last = fns.pop();
+  return fns.reduceRight(function (prev,next) {
+      return next(prev);
+  },last(...args))
+};
+console.log(compose(len, toResult)(&apos;Mrs jiang&apos;, &apos;&#x5F88;&#x5E05;&apos;));
+</code></pre><h3 id="t75.applyMiddleware&#x5B9E;&#x73B0;">5.applyMiddleware&#x5B9E;&#x73B0; <a href="#t75.applyMiddleware&#x5B9E;&#x73B0;"> # </a></h3>
+<pre><code>let applyMiddleWare = (...middlewares) =&gt; createStore =&gt; reducer =&gt;{
+  let store = createStore(reducer);
+  let middles = middlewares.map(middleware=&gt;middleware(store))
+  let dispatch = compose(...middles)(store.dispatch);
+  return {
+    ...store,
+    dispatch
+  }
+};
+</code></pre><h3 id="t86.&#x7B80;&#x5316;applyMiddleWare&#x5E94;&#x7528;">6.&#x7B80;&#x5316;applyMiddleWare&#x5E94;&#x7528; <a href="#t86.&#x7B80;&#x5316;applyMiddleWare&#x5E94;&#x7528;"> # </a></h3>
+<p>&#x6700;&#x7EC8;&#x5B9E;&#x73B0;&#x6548;&#x679C;</p>
+<pre><code>export default createStore(reducer,applyMiddleware(reduxThunk,reduxPromise));
+</code></pre><p>&#x6700;&#x7EC8;&#x7248;redux&#x5E93;</p>
+<pre><code>let createStore = (reducer, fn) =&gt; {
+    let state;
+    let listeners = [];
+    let getState = () =&gt; state;
+    let dispatch = (action) =&gt; {
+        state = reducer(state, action);
+        listeners.forEach(item =&gt; item());
+    };
+    dispatch({});
+    let subscribe = (l) =&gt; {
+        listeners.push(l);
+        return () =&gt; {
+            listeners = listeners.filter(item =&gt; item !== l);
+        }
+    };
+    if (typeof fn === &apos;function&apos;) {
+        return fn(createStore, reducer);
+    }
+    return {
+        createStore,
+        dispatch,
+        getState,
+        subscribe
+    }
+};
+let combineReducers = (reducers) =&gt; (newState = {}, action) =&gt; {
+    for (let key in reducers) {
+        newState[key] = reducers[key](newState[key], action)
+    }
+    return newState;
+};
+let bindActionCreators = (actions, dispatch) =&gt; {
+    let obj = {};
+    for (let key in actions) {
+        obj[key] = (...args) =&gt; dispatch(actions[key](...args))
+    }
+    return obj
+};
+let applyMiddleware = (...middlewares) =&gt; (createStore, reducer) =&gt; {
+    let store = createStore(reducer);
+    let middles = middlewares.map(middleware =&gt; middleware(store));
+    let dispatch = compose(...middles)(store.dispatch);
+    return {
+        ...store,
+        dispatch
+    }
+};
+let compose = (...fns) =&gt; {
+    return (...args) =&gt; {
+        let fn = fns.pop();
+        return fns.reduceRight((prev, next) =&gt; {
+            return next(prev);
+        }, fn(...args));
+    }
+};
+export {createStore, combineReducers, bindActionCreators, applyMiddleware, compose}
+</code></pre>
         <div class="copyright">Powered by <a href="https://github.com/jaywcjlove/idoc" target="_blank">idoc</a>. Dependence <a href="https://nodejs.org">Node.js</a> run.</div>
     </div>
     

@@ -19,7 +19,7 @@
 <div class="warpper">
 
     <div class="page-toc">
-        <ul><li><a href="#t0React-Redux应用">React-Redux应用</a><ul><li><a href="#t11.为什么需要高阶组件">1.为什么需要高阶组件</a></li><li><a href="#t22.实现高阶组件">2.实现高阶组件</a></li><li><a href="#t33.context的用法">3.context的用法</a></li><li><a href="#t44.使用react-redux实现todo">4.使用react-redux实现todo</a></li><li><a href="#t55.实现react-redux库">5.实现react-redux库</a></li><li><a href="#t66.redux中bindActionCreators方法">6.redux中bindActionCreators方法</a></li></ul></li></ul>
+        <ul><li><a href="#t0React-Redux应用">React-Redux应用</a><ul><li><a href="#t11.为什么需要高阶组件">1.为什么需要高阶组件</a></li><li><a href="#t22.实现高阶组件">2.实现高阶组件</a></li><li><a href="#t33.context的用法">3.context的用法</a><ul><li><a href="#t4跨组件交互">跨组件交互</a></li></ul></li><li><a href="#t54.使用react-redux实现todo">4.使用react-redux实现todo</a></li><li><a href="#t65.实现react-redux库">5.实现react-redux库</a><ul><li><a href="#t7react-redux计数器">react-redux计数器</a></li><li><a href="#t8编写react-redux库">编写react-redux库</a></li><li><a href="#t9bindActionCreators方法">bindActionCreators方法</a></li><li><a href="#t10简化mapDispatchToProps">简化mapDispatchToProps</a></li></ul></li></ul></li></ul>
     </div>
     
     <div class="content markdown-body">
@@ -84,13 +84,158 @@ export default Local(&apos;username&apos;)(Username);
 <p>1) &#x7236; childContextTypes getChildContext&#x51FD;&#x6570;</p>
 <p>2) &#x5B50; contextTypes</p>
 <pre><code>App |-&gt; header -&gt; title
-    |-&gt; content
-</code></pre><h3 id="t44.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo">4.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo <a href="#t44.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo"> # </a></h3>
+</code></pre><h4 id="t4&#x8DE8;&#x7EC4;&#x4EF6;&#x4EA4;&#x4E92;">&#x8DE8;&#x7EC4;&#x4EF6;&#x4EA4;&#x4E92; <a href="#t4&#x8DE8;&#x7EC4;&#x4EF6;&#x4EA4;&#x4E92;"> # </a></h4>
+<pre><code>import React from &apos;react&apos;;
+import PropTypes from &apos;prop-types&apos;
+import Header from &quot;./Header&quot;;
+export default class App extends React.Component {
+  constructor(){
+    super();
+    this.state = {color:&apos;red&apos;}
+  }
+  static childContextTypes = { //&#x5B9A;&#x4E49;&#x5B50;&#x7EC4;&#x4EF6;&#x4E0A;&#x4E0B;&#x6587;&#x7684;&#x7C7B;&#x578B;
+    color:PropTypes.string,
+    setColor:PropTypes.func
+  };
+  setColor = (color) =&gt;{
+      this.setState({
+        color
+      })
+  };
+  getChildContext(){ // &#x5B9A;&#x4E49;&#x5B50;&#x7EC4;&#x4EF6;&#x4E0A;&#x4E0B;&#x6587;&#x7684;&#x6570;&#x636E;
+    return {color:this.state.color,setColor:this.setColor}
+  }
+  render(){
+    return &lt;div&gt;
+      &lt;Header/&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default class Header extends React.Component {
+  static contextTypes = {
+     setColor:PropTypes.func
+  };
+  render(){
+    return &lt;div&gt;
+      &lt;button onClick={()=&gt;{
+        this.context.setColor(&apos;green&apos;);
+      }}&gt;&#x53D8;&#x7EFF;&lt;/button&gt;
+      &lt;Title/&gt;
+    &lt;/div&gt;
+  }
+}
+
+export default class Title extends React.Component {
+  static contextTypes = {
+    color:PropTypes.string
+  };
+  render(){ // &#x901A;&#x8FC7;context&#x83B7;&#x53D6;&#x7236;&#x7EC4;&#x4EF6;&#x5B9A;&#x4E49;&#x7684;&#x6570;&#x636E;
+    return &lt;div style={{color:this.context.color}}&gt;Title&lt;/div&gt;
+  }
+}
+</code></pre><h3 id="t54.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo">4.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo <a href="#t54.&#x4F7F;&#x7528;react-redux&#x5B9E;&#x73B0;todo"> # </a></h3>
 <pre><code>Todos |-&gt; TodoHeader
       |-&gt; TodoItems
       |-&gt; TodoFooter
-</code></pre><h3 id="t55.&#x5B9E;&#x73B0;react-redux&#x5E93;">5.&#x5B9E;&#x73B0;react-redux&#x5E93; <a href="#t55.&#x5B9E;&#x73B0;react-redux&#x5E93;"> # </a></h3>
-<h3 id="t66.redux&#x4E2D;bindActionCreators&#x65B9;&#x6CD5;">6.redux&#x4E2D;bindActionCreators&#x65B9;&#x6CD5; <a href="#t66.redux&#x4E2D;bindActionCreators&#x65B9;&#x6CD5;"> # </a></h3>
+</code></pre><h3 id="t65.&#x5B9E;&#x73B0;react-redux&#x5E93;">5.&#x5B9E;&#x73B0;react-redux&#x5E93; <a href="#t65.&#x5B9E;&#x73B0;react-redux&#x5E93;"> # </a></h3>
+<h4 id="t7react-redux&#x8BA1;&#x6570;&#x5668;">react-redux&#x8BA1;&#x6570;&#x5668; <a href="#t7react-redux&#x8BA1;&#x6570;&#x5668;"> # </a></h4>
+<p>&#x548C;&#x4EE5;&#x524D;&#x5199;&#x8FC7;&#x7684;&#x903B;&#x8F91;&#x4E00;&#x81F4;,&#x8FD9;&#x56DE;&#x52A0;&#x4E0A;react-redux&#x7684;&#x903B;&#x8F91;</p>
+<pre><code>import React from &apos;react&apos;;
+import ReactDOM from &apos;react-dom&apos;;
+import Counter from &quot;./components/Counter&quot;;
+import store from &apos;./store/index&apos;;
+import {Provider} from &apos;react-redux&apos;;
+ReactDOM.render(
+  &lt;Provider store={store}&gt;
+    &lt;Counter/&gt;
+  &lt;/Provider&gt;,window.root);
+
+// counter&#x7EC4;&#x4EF6;
+class Counter extends React.Component {
+  render(){
+    return &lt;div&gt;
+      &#x6570;&#x91CF;:{this.props.number}
+      &lt;button onClick={()=&gt;{this.props.add(1)}}&gt;+&lt;/button&gt;
+      &lt;button  onClick={()=&gt;{this.props.minus(1)}}&gt;-&lt;/button&gt;
+      &lt;/div&gt;
+  }
+}
+export default connect(state=&gt;({...state}),dispatch=&gt;({
+  add:(amount)=&gt;{dispatch(actions.add(amount))},
+  minus:(amount)=&gt;{dispatch(actions.minus(amount))}
+}))(Counter)
+</code></pre><h4 id="t8&#x7F16;&#x5199;react-redux&#x5E93;">&#x7F16;&#x5199;react-redux&#x5E93; <a href="#t8&#x7F16;&#x5199;react-redux&#x5E93;"> # </a></h4>
+<pre><code>import React from &apos;react&apos;;
+import PropTypes from &apos;prop-types&apos;;
+class Provider extends React.Component{
+  static childContextTypes = {
+    store:PropTypes.object
+  };
+  getChildContext(){
+    return {store:this.props.store}
+  }
+  constructor(){
+    super();
+  }
+  render(){
+    return this.props.children;
+  }
+}
+let connect = (mapStateToProps,mapDispatchToProps) =&gt; (Component) =&gt;{
+  return class Proxy extends React.Component{
+    static contextTypes = {
+      store:PropTypes.object
+    };
+    componentDidMount(){
+      this.unsubscribe = this.context.store.subscribe(()=&gt;{
+        this.setState(mapStateToProps(this.context.store.getState()))
+      });
+    }
+    componentWillUnmount(){
+      this.unsubscribe();
+    }
+    constructor(props,context){
+      super();
+      this.state = mapStateToProps(context.store.getState());
+    }
+    render(){
+      return &lt;Component {...this.state} {...mapDispatchToProps(this.context.store.dispatch)}/&gt;
+    }
+  }
+};
+export {Provider,connect}
+</code></pre><h4 id="t9bindActionCreators&#x65B9;&#x6CD5;">bindActionCreators&#x65B9;&#x6CD5; <a href="#t9bindActionCreators&#x65B9;&#x6CD5;"> # </a></h4>
+<pre><code>let bindActionCreators = (actions,dispatch) =&gt; {
+  let obj = {}
+  for(let key in actions){
+    obj[key] = (...args)=&gt;{
+      dispatch(actions[key](...args))
+    }
+  }
+  return obj
+};
+
+export default connect(state=&gt;({...state}),dispatch=&gt;bindActionCreators(actions,dispatch))(Counter)
+</code></pre><blockquote>
+<p>bindActionCreators&#x662F;redux&#x4E2D;&#x7684;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#xFF0C;&#x5E76;&#x4E14;&#x8FD9;&#x6837;&#x7684;&#x903B;&#x8F91;&#x8FC7;&#x4E8E;&#x590D;&#x6742;&#xFF0C;&#x6211;&#x4EEC;&#x4F9D;&#x65E7;&#x5E0C;&#x671B;&#x53EF;&#x4EE5;&#x5728;react-redux&#x4E2D;&#x5185;&#x90E8;&#x53EF;&#x4EE5;&#x7B80;&#x5316;&#x64CD;&#x4F5C;</p>
+</blockquote>
+<h4 id="t10&#x7B80;&#x5316;mapDispatchToProps">&#x7B80;&#x5316;mapDispatchToProps <a href="#t10&#x7B80;&#x5316;mapDispatchToProps"> # </a></h4>
+<pre><code>export default connect(state=&gt;({...state}),actions)(Counter);
+
+import {bindActionCreators} from &apos;./redux&apos;
+render(){
+  let r ={}
+  if(typeof mapDispatchToProps === &apos;object&apos;){
+    r = bindActionCreators(mapDispatchToProps,this.context.store.dispatch)
+  }else{
+    r = mapDispatchToProps(this.context.store.dispatch)
+  }
+  return &lt;Component {...this.state} {...r}/&gt;
+}
+</code></pre><blockquote>
+<p>&#x8FD9;&#x6837;&#x6211;&#x4EEC;&#x5728;&#x7EC4;&#x4EF6;&#x4E2D;&#x66F4;&#x6539;&#x72B6;&#x6001;&#x65F6;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x4F20;&#x5165;actionCreator&#x5BF9;&#x8C61;&#x3002;</p>
+</blockquote>
 
         <div class="copyright">Powered by <a href="https://github.com/jaywcjlove/idoc" target="_blank">idoc</a>. Dependence <a href="https://nodejs.org">Node.js</a> run.</div>
     </div>
