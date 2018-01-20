@@ -19,7 +19,8 @@
             "Redux应用.md",
             "Redux深入.md",
             "React-Redux.md",
-            "MiddleWare应用.md"
+            "MiddleWare应用.md",
+            "React路由.md"
         ]
     }
 }
